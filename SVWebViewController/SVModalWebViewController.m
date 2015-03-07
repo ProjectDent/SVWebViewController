@@ -63,8 +63,16 @@
     self.webViewController.delegate = webViewDelegate;
 }
 
+- (void)setActivityDelegate:(id<SVWebViewControllerActivityDelegate>)activityDelegate {
+    self.webViewController.activityDelegate = activityDelegate;
+}
+
 - (id<UIWebViewDelegate>)webViewDelegate {
     return self.webViewController.delegate;
+}
+
+- (id<SVWebViewControllerActivityDelegate>)activityDelegate {
+    return self.webViewController.activityDelegate;
 }
 
 @end

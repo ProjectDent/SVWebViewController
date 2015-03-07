@@ -7,6 +7,7 @@
 //  https://github.com/samvermette/SVWebViewController
 
 #import <UIKit/UIKit.h>
+#import "SVWebViewController.h"
 
 @interface SVModalWebViewController : UINavigationController
 
@@ -16,5 +17,6 @@
 
 @property (nonatomic, strong) UIColor *barsTintColor;
 @property (nonatomic, weak) id<UIWebViewDelegate> webViewDelegate;
+@property (nonatomic, weak) id <SVWebViewControllerActivityDelegate> activityDelegate;
 
 @end

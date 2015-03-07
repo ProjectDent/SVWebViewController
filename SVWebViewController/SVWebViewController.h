@@ -6,6 +6,15 @@
 //
 //  https://github.com/samvermette/SVWebViewController
 
+@class SVWebViewController;
+
+@protocol SVWebViewControllerActivityDelegate
+
+- (void)webViewControllerDidBeginNetworkActivity:(SVWebViewController *)webViewController;
+- (void)webViewControllerDidFinishNetworkActivity:(SVWebViewController *)webViewController;
+
+@end
+
 @interface SVWebViewController : UIViewController
 
 - (instancetype)initWithAddress:(NSString*)urlString;
@@ -13,5 +22,6 @@
 - (instancetype)initWithURLRequest:(NSURLRequest *)request;
 
 @property (nonatomic, weak) id<UIWebViewDelegate> delegate;
+@property (nonatomic, weak) id <SVWebViewControllerActivityDelegate> activityDelegate;
 
 @end

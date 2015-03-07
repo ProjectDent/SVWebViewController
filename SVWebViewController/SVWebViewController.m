@@ -21,6 +21,8 @@
 @property (nonatomic, strong) UIWebView *webView;
 @property (nonatomic, strong) NSURLRequest *request;
 
+@property (nonatomic) BOOL knownNetworkActivity;
+
 @end
 
 
@@ -30,7 +32,12 @@
 
 - (void)dealloc {
     [self.webView stopLoading];
-    [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
+    
+    if (self.knownNetworkActivity == YES) {
+        self.knownNetworkActivity = NO;
+        [self.activityDelegate webViewControllerDidFinishNetworkActivity:self];
+    }
+    
     self.webView.delegate = nil;
     self.delegate = nil;
 }
@@ -100,7 +107,11 @@
 
 - (void)viewDidDisappear:(BOOL)animated {
     [super viewDidDisappear:animated];
-    [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
+    
+    if (self.knownNetworkActivity == YES) {
+        self.knownNetworkActivity = NO;
+        [self.activityDelegate webViewControllerDidFinishNetworkActivity:self];
+    }
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation {
@@ -219,7 +230,11 @@
 #pragma mark - UIWebViewDelegate
 
 - (void)webViewDidStartLoad:(UIWebView *)webView {
-    [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
+    if (self.knownNetworkActivity == NO) {
+        self.knownNetworkActivity = YES;
+        [self.activityDelegate webViewControllerDidBeginNetworkActivity:self];
+    }
+    
     [self updateToolbarItems];
     
     if ([self.delegate respondsToSelector:@selector(webViewDidStartLoad:)]) {
@@ -229,7 +244,10 @@
 
 
 - (void)webViewDidFinishLoad:(UIWebView *)webView {
-    [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
+    if (self.knownNetworkActivity == YES) {
+        self.knownNetworkActivity = NO;
+        [self.activityDelegate webViewControllerDidFinishNetworkActivity:self];
+    }
     
     if (self.navigationItem.title == nil) {
         self.navigationItem.title = [webView stringByEvaluatingJavaScriptFromString:@"document.title"];
@@ -243,7 +261,11 @@
 }
 
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
-    [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
+    if (self.knownNetworkActivity == YES) {
+        self.knownNetworkActivity = NO;
+        [self.activityDelegate webViewControllerDidFinishNetworkActivity:self];
+    }
+    
     [self updateToolbarItems];
     
     if ([self.delegate respondsToSelector:@selector(webView:didFailLoadWithError:)]) {
